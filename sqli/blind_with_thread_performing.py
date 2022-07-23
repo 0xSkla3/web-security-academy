@@ -65,11 +65,6 @@ def checkLength(s, column_name, table_name, conditional_key, conditional_value, 
         thread.join()
     
     return buildLength(bits_array)
-    #r = s.get(url)
-    #if ():
-    #    bits_array.append((bit,1))
-    #    else:
-    #        bits_array.append((bit,0))
 
 def main():
     p1 = log.progress("Brute force")

